@@ -10,20 +10,12 @@ import ModalEdit from '../Modal/ModalEdit';
 
 
 interface Contact {
-    id: string;
+    id: number;
     name: string;
     lastName?: string;
-    email: string;
-    phone: string[] | string;
-    address: {
-        street: string;
-        city: string;
-        zipcode: string;
-    }[] | {
-        street: string;
-        city: string;
-        zipcode: string;
-    };
+    email?: string;
+    phone?: string[];
+    address?: { street: string; city: string; zipcode: string }[];
 }
 
 interface Props {
@@ -32,6 +24,7 @@ interface Props {
 
 const ContactsList: React.FC<Props> = ({ contacts }) => {
     const { inputValue, open, setOpen, formData, setFormData, openDelete, setOpenDelete, setDeleteData, dataContact, setDataContact, openEdit, setOpenEdit } = useContext(StoreContext);
+    
 
     useEffect(() => {
         const apiDataLoaded = localStorage.getItem('apiDataLoaded');
@@ -66,7 +59,9 @@ const ContactsList: React.FC<Props> = ({ contacts }) => {
     }
 
     const handleSave = (updatedContact: Contact) => {
-        const updatedContacts = formData.map((contact: { id: string; }) => contact.id === updatedContact.id ? updatedContact : contact);
+        const updatedContacts = formData.map((contact: { id: number; }) => 
+            contact.id === updatedContact.id ? updatedContact : contact
+        );
         setFormData(updatedContacts);
         localStorage.setItem('contacts', JSON.stringify(updatedContacts));
         setOpenEdit(false);
