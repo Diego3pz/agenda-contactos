@@ -25,7 +25,7 @@ const Home: NextPage<Props> = ({ contacts }) => {
   return (
     <div className='w-full h-screen bg-[#F1F6F9]'>
       <Navbar fluid className='w-full fixed z-10'>
-        <Navbar.Brand href="/contacts" className='dark:text-white text-gray-500'>
+        <Navbar.Brand href="/" className='dark:text-white text-gray-500'>
           <FcContacts className='mr-3 w-10 h-6 sm:h-9' />
           <span className="self-center whitespace-nowrap md:text-lg text-xl font-semibold dark:text-white">Agenda de Contactos</span>
         </Navbar.Brand>
@@ -57,7 +57,7 @@ const Home: NextPage<Props> = ({ contacts }) => {
 export default Home
 
 export async function getServerSideProps() {
-  const response = await axios.get(`${process.env.REACT_APP_API_UR}/api/contacts`);
+  const response = await axios.get(`${process.env.API_URL}/api/contacts`);
   const contacts = response.data;
   return {
     props: {
