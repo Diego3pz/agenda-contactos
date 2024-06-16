@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             const newContact: Contact = {
-                id: Date.now(), // Or any other logic to generate a unique ID
+                id: Date.now(),
                 name,
                 lastName,
                 email,

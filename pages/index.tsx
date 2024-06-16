@@ -13,7 +13,6 @@ interface Contact {
   id: number;
   name: string;
   email: string;
-  // Agrega otras propiedades según la estructura real de tus datos de contacto
 }
 
 interface Props {
@@ -58,7 +57,7 @@ const Home: NextPage<Props> = ({ contacts }) => {
 export default Home
 
 export async function getServerSideProps() {
-  const response = await axios.get('http://localhost:3000/api/contacts');
+  const response = await axios.get(`${process.env.REACT_APP_API_UR}/api/contacts`);
   const contacts = response.data;
   return {
     props: {

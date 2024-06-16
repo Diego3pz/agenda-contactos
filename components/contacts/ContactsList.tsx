@@ -24,12 +24,12 @@ interface Props {
 
 const ContactsList: React.FC<Props> = ({ contacts }) => {
     const { inputValue, open, setOpen, formData, setFormData, openDelete, setOpenDelete, setDeleteData, dataContact, setDataContact, openEdit, setOpenEdit } = useContext(StoreContext);
-    
+
 
     useEffect(() => {
         const apiDataLoaded = localStorage.getItem('apiDataLoaded');
         if (!apiDataLoaded) {
-            axios.get('http://localhost:3000/api/contacts')
+            axios.get(`${process.env.REACT_APP_API_UR}/api/contacts`)
                 .then(res => {
                     setFormData(res.data);
                     localStorage.setItem('contacts', JSON.stringify(res.data));
@@ -59,7 +59,7 @@ const ContactsList: React.FC<Props> = ({ contacts }) => {
     }
 
     const handleSave = (updatedContact: Contact) => {
-        const updatedContacts = formData.map((contact: { id: number; }) => 
+        const updatedContacts = formData.map((contact: { id: number; }) =>
             contact.id === updatedContact.id ? updatedContact : contact
         );
         setFormData(updatedContacts);
