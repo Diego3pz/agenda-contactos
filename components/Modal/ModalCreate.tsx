@@ -1,12 +1,27 @@
 import { StoreContext } from '@/store/StoreProvider';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { UserPlus, X } from 'react-feather';
 import { Button, Label, TextInput } from "flowbite-react";
 import { LiaPlusSolid } from "react-icons/lia";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const ModalCreate = () => {
+interface Address {
+    street: string;
+    city: string;
+    zipcode: string;
+}
+
+interface FormData {
+    id: number;
+    name: string;
+    lastName: string;
+    email: string;
+    phone: string[];
+    address: Address[];
+}
+
+const ModalCreate: React.FC = () => {
     const notify = () => toast.info('Contacto Agregado', {
         position: "bottom-right",
         autoClose: 2000,
@@ -17,9 +32,10 @@ const ModalCreate = () => {
         progress: undefined,
         theme: "light",
     });
+
     const { setOpen } = useContext(StoreContext);
     const { formData, setFormData } = useContext(StoreContext);
-    const [localFormData, setLocalFormData] = useState({
+    const [localFormData, setLocalFormData] = useState<FormData>({
         id: Date.now(),
         name: '',
         lastName: '',
@@ -39,14 +55,14 @@ const ModalCreate = () => {
         });
     }, [setOpen]);
 
-    const handleChange = (event, index, type) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement>, index?: number, type?: string) => {
         const { name, value } = event.target;
 
-        if (type === 'phone') {
+        if (type === 'phone' && index !== undefined) {
             const newPhones = [...localFormData.phone];
             newPhones[index] = value;
             setLocalFormData({ ...localFormData, phone: newPhones });
-        } else if (type === 'address') {
+        } else if (type === 'address' && index !== undefined) {
             const newAddresses = [...localFormData.address];
             newAddresses[index] = { ...newAddresses[index], [name]: value };
             setLocalFormData({ ...localFormData, address: newAddresses });
@@ -63,7 +79,7 @@ const ModalCreate = () => {
         setLocalFormData({ ...localFormData, address: [...localFormData.address, { street: '', city: '', zipcode: '' }] });
     };
 
-    const removeField = (index, type) => {
+    const removeField = (index: number, type: string) => {
         if (type === 'phone' && localFormData.phone.length > 1) {
             const newPhones = localFormData.phone.filter((_, i) => i !== index);
             setLocalFormData({ ...localFormData, phone: newPhones });
@@ -73,7 +89,7 @@ const ModalCreate = () => {
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
         const updatedContacts = [...formData, localFormData];
         setFormData(updatedContacts);
@@ -90,7 +106,7 @@ const ModalCreate = () => {
     };
 
     return (
-        <form className="text-center w-full lg:w-[30rem]  max-w-lg mx-auto" onSubmit={handleSubmit}>
+        <form className="text-center w-full lg:w-[30rem] max-w-lg mx-auto" onSubmit={handleSubmit}>
             <div className='space-y-6'>
                 <UserPlus size={56} className="mx-auto text-blue-500 mb-2" />
                 <h3 className="text-xl font-medium text-gray-900 dark:text-white">Nuevo Contacto</h3>
@@ -145,7 +161,6 @@ const ModalCreate = () => {
                                 required
                                 className='mb-2 w-full'
                                 type='number'
-
                             />
                             <button
                                 type="button"
@@ -212,8 +227,8 @@ const ModalCreate = () => {
 
             </div>
             <div className="w-full flex gap-4">
-                <Button className='bg-blue-500' type='submit' onClick={() => notify()}>Agregar Contacto</Button>
-                <Button className="bg-gray-500" onClick={() => setOpen(false)}>Cancelar</Button>
+                <Button className='bg-blue-500' type='submit' onClick={notify}>Agregar Contacto</Button>
+                <Button className="bg-gray-500" type="button" onClick={() => setOpen(false)}>Cancelar</Button>
             </div>
         </form>
     );

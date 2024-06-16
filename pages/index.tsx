@@ -9,12 +9,23 @@ import { useContext } from 'react';
 import { StoreContext } from '@/store/StoreProvider';
 import { ToastContainer } from 'react-toastify';
 
+interface Contact {
+  id: number;
+  name: string;
+  email: string;
+  // Agrega otras propiedades según la estructura real de tus datos de contacto
+}
 
-export default function Home({ contacts }) {
-  const { setOpen } = useContext(StoreContext)
+interface Props {
+  contacts: Contact[];
+}
+
+const Home: NextPage<Props> = ({ contacts }) => {
+  const { setOpen } = useContext(StoreContext);
+
   return (
-    <div className=' w-full h-screen bg-[#F1F6F9]'>
-      <Navbar fluid className=' w-full fixed z-10'>
+    <div className='w-full h-screen bg-[#F1F6F9]'>
+      <Navbar fluid className='w-full fixed z-10'>
         <Navbar.Brand href="/contacts" className='dark:text-white text-gray-500'>
           <FcContacts className='mr-3 w-10 h-6 sm:h-9' />
           <span className="self-center whitespace-nowrap md:text-lg text-xl font-semibold dark:text-white">Agenda de Contactos</span>
@@ -33,18 +44,18 @@ export default function Home({ contacts }) {
             </Dropdown.Header>
             <Dropdown.Item>Sign out</Dropdown.Item>
           </Dropdown>
-
         </div>
-
         <SearchComponent />
       </Navbar>
-      <div className=' md:py-5 md:px-5'>
+      <div className='md:py-5 md:px-5'>
         <ContactsList contacts={contacts} />
       </div>
       <ToastContainer />
     </div>
-  )
-}
+  );
+};
+
+export default Home
 
 export async function getServerSideProps() {
   const response = await axios.get('http://localhost:3000/api/contacts');

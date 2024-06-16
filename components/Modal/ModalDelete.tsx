@@ -1,10 +1,19 @@
-import { StoreContext } from '@/store/StoreProvider'
-import React, { useContext } from 'react'
-import { Trash } from 'react-feather'
-import { toast } from 'react-toastify'
+import { StoreContext } from '@/store/StoreProvider';
+import React, { useContext } from 'react';
+import { Trash } from 'react-feather';
+import { toast } from 'react-toastify';
 
-const ModalDelete = () => {
-    const { setOpen, deleteData, openDelete, setOpenDelete, formData, setFormData } = useContext(StoreContext)
+interface FormData {
+    id: number;
+    name: string;
+    lastName: string;
+    email: string;
+    phone: string[];
+    address: { street: string; city: string; zipcode: string }[];
+}
+
+const ModalDelete: React.FC = () => {
+    const { setOpen, deleteData, openDelete, setOpenDelete, formData, setFormData } = useContext(StoreContext);
     const notify = () => toast.error('Contacto Eliminado', {
         position: "bottom-right",
         autoClose: 2000,
@@ -15,9 +24,10 @@ const ModalDelete = () => {
         progress: undefined,
         theme: "light",
     });
-    const handleDelete = (id) => {
-        const newArray = formData.filter(e => e.id !== id)
-        setFormData(newArray)
+
+    const handleDelete = (id: number) => {
+        const newArray = formData.filter((e: FormData) => e.id !== id);
+        setFormData(newArray);
         localStorage.setItem('contacts', JSON.stringify(newArray));
     }
 
@@ -31,16 +41,16 @@ const ModalDelete = () => {
                 </p>
             </div>
             <div className="flex gap-4">
-                <button className="btn btn-danger w-full" onClick={() => (setOpenDelete(false), handleDelete(deleteData), notify())}>Eliminar</button>
+                <button className="btn btn-danger w-full" onClick={() => { setOpenDelete(false); handleDelete(deleteData); notify(); }}>Eliminar</button>
                 <button
                     className="btn btn-light w-full"
                     onClick={() => setOpenDelete(false)}
                 >
-                    Cancel
+                    Cancelar
                 </button>
             </div>
         </div>
-    )
+    );
 }
 
-export default ModalDelete
+export default ModalDelete;

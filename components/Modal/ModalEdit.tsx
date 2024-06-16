@@ -1,11 +1,25 @@
-import { StoreContext } from '@/store/StoreProvider'
-import React, { useContext, useEffect, useState } from 'react'
-import { UserPlus, X } from 'react-feather'
+import { StoreContext } from '@/store/StoreProvider';
+import React, { useContext, useEffect, useState } from 'react';
+import { UserPlus, X } from 'react-feather';
 import { Button, Label, TextInput } from "flowbite-react";
 import { LiaPlusSolid } from "react-icons/lia";
 import { toast } from 'react-toastify';
 
-const ModalEdit = ({ contact, onSave }) => {
+interface Contact {
+    id: number;
+    name: string;
+    lastName?: string;
+    email?: string;
+    phone?: string[];
+    address?: { street: string; city: string; zipcode: string }[];
+}
+
+interface ModalEditProps {
+    contact: Contact;
+    onSave: (formData: Contact) => void;
+}
+
+const ModalEdit: React.FC<ModalEditProps> = ({ contact, onSave }) => {
     const { setOpenEdit } = useContext(StoreContext);
     const notify = () => toast.success('Contacto Actualizado', {
         position: "bottom-right",
@@ -17,11 +31,12 @@ const ModalEdit = ({ contact, onSave }) => {
         progress: undefined,
         theme: "light",
     });
-    const transformToArray = (value) => {
+
+    const transformToArray = (value: string | string[]): string[] => {
         return Array.isArray(value) ? value : [value];
     };
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<Contact>({
         ...contact,
         lastName: contact.lastName || '',
         phone: transformToArray(contact.phone || ''),
@@ -37,15 +52,15 @@ const ModalEdit = ({ contact, onSave }) => {
         });
     }, [contact]);
 
-    const handleChange = (e, index, type) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number, type: string) => {
         const { name, value } = e.target;
 
         if (type === 'phone') {
-            const newPhones = [...formData.phone];
+            const newPhones = [...formData.phone!];
             newPhones[index] = value;
             setFormData({ ...formData, phone: newPhones });
         } else if (type === 'address') {
-            const newAddresses = [...formData.address];
+            const newAddresses = [...formData.address!];
             newAddresses[index] = { ...newAddresses[index], [name]: value };
             setFormData({ ...formData, address: newAddresses });
         } else {
@@ -54,19 +69,19 @@ const ModalEdit = ({ contact, onSave }) => {
     };
 
     const addPhoneField = () => {
-        setFormData({ ...formData, phone: [...formData.phone, ''] });
+        setFormData({ ...formData, phone: [...formData.phone!, ''] });
     };
 
     const addAddressField = () => {
-        setFormData({ ...formData, address: [...formData.address, { street: '', city: '', zipcode: '' }] });
+        setFormData({ ...formData, address: [...formData.address!, { street: '', city: '', zipcode: '' }] });
     };
 
-    const removeField = (index, type) => {
-        if (type === 'phone' && formData.phone.length > 1) {
-            const newPhones = formData.phone.filter((_, i) => i !== index);
+    const removeField = (index: number, type: string) => {
+        if (type === 'phone' && formData.phone!.length > 1) {
+            const newPhones = formData.phone!.filter((_, i) => i !== index);
             setFormData({ ...formData, phone: newPhones });
-        } else if (type === 'address' && formData.address.length > 1) {
-            const newAddresses = formData.address.filter((_, i) => i !== index);
+        } else if (type === 'address' && formData.address!.length > 1) {
+            const newAddresses = formData.address!.filter((_, i) => i !== index);
             setFormData({ ...formData, address: newAddresses });
         }
     };
@@ -74,10 +89,11 @@ const ModalEdit = ({ contact, onSave }) => {
     const handleSave = () => {
         onSave(formData);
         setOpenEdit(false);
+        notify();
     };
 
     return (
-        <form className="text-center w-full lg:w-[30rem]  max-w-lg mx-auto">
+        <form className="text-center w-full lg:w-[30rem] max-w-lg mx-auto">
             <div className='space-y-6'>
                 <UserPlus size={56} className="mx-auto text-green-500 mb-2" />
                 <h3 className="text-xl font-medium text-gray-900 dark:text-white">Editar Contacto</h3>
@@ -91,7 +107,7 @@ const ModalEdit = ({ contact, onSave }) => {
                         name="name"
                         value={formData.name}
                         placeholder="Nombre"
-                        onChange={(e) => handleChange(e)}
+                        onChange={(e) => handleChange(e, 0, '')}
                         required
                     />
                     <div className="mb-2 block">
@@ -101,7 +117,7 @@ const ModalEdit = ({ contact, onSave }) => {
                         name="lastName"
                         value={formData.lastName}
                         placeholder="Apellidos"
-                        onChange={(e) => handleChange(e)}
+                        onChange={(e) => handleChange(e, 0, '')}
                         required
                     />
                     <div className="mb-2 block">
@@ -111,13 +127,13 @@ const ModalEdit = ({ contact, onSave }) => {
                         name="email"
                         value={formData.email}
                         placeholder="Correo electrónico"
-                        onChange={(e) => handleChange(e)}
+                        onChange={(e) => handleChange(e, 0, '')}
                         required
                     />
                     <div className="mb-2 block">
                         <Label htmlFor="phone" value="Teléfono" />
                     </div>
-                    {formData.phone.map((phone, index) => (
+                    {formData.phone && formData.phone.map((phone, index) => (
                         <div className='flex gap-2 place-items-center mb-2' key={index}>
                             <TextInput
                                 name="phone"
@@ -144,7 +160,7 @@ const ModalEdit = ({ contact, onSave }) => {
                     <div className="mb-2 block">
                         <Label htmlFor="address" value="Dirección" />
                     </div>
-                    {formData.address.map((address, index) => (
+                    {formData.address && formData.address.map((address, index) => (
                         <div key={index} className='pl-5 gap-2 flex place-items-center mb-2'>
                             <div className='w-full'>
                                 <TextInput
@@ -189,10 +205,10 @@ const ModalEdit = ({ contact, onSave }) => {
 
             </div>
             <div className="w-full flex gap-4">
-                <Button className="bg-green-500" onClick={() => (handleSave(), notify())}>Actualizar</Button>
+                <Button className="bg-green-500" onClick={handleSave}>Actualizar</Button>
                 <Button className="bg-gray-500" onClick={() => setOpenEdit(false)}>Cancelar</Button>
             </div>
-        </form >
+        </form>
     );
 }
 

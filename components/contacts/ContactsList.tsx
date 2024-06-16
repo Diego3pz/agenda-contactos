@@ -8,7 +8,29 @@ import ModalCreate from '../Modal/ModalCreate';
 import ModalDelete from '../Modal/ModalDelete';
 import ModalEdit from '../Modal/ModalEdit';
 
-export default function ContactsList({ contacts }: any) {
+
+interface Contact {
+    id: string;
+    name: string;
+    lastName?: string;
+    email: string;
+    phone: string[] | string;
+    address: {
+        street: string;
+        city: string;
+        zipcode: string;
+    }[] | {
+        street: string;
+        city: string;
+        zipcode: string;
+    };
+}
+
+interface Props {
+    contacts: Contact[];
+}
+
+const ContactsList: React.FC<Props> = ({ contacts }) => {
     const { inputValue, open, setOpen, formData, setFormData, openDelete, setOpenDelete, setDeleteData, dataContact, setDataContact, openEdit, setOpenEdit } = useContext(StoreContext);
 
     useEffect(() => {
@@ -43,8 +65,8 @@ export default function ContactsList({ contacts }: any) {
         });
     }
 
-    const handleSave = (updatedContact) => {
-        const updatedContacts = formData.map(contact => contact.id === updatedContact.id ? updatedContact : contact);
+    const handleSave = (updatedContact: Contact) => {
+        const updatedContacts = formData.map((contact: { id: string; }) => contact.id === updatedContact.id ? updatedContact : contact);
         setFormData(updatedContacts);
         localStorage.setItem('contacts', JSON.stringify(updatedContacts));
         setOpenEdit(false);
@@ -110,4 +132,4 @@ export default function ContactsList({ contacts }: any) {
 }
 
 
-
+export default ContactsList
