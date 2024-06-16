@@ -1,6 +1,13 @@
+import { ReactNode } from "react";
 import { X } from "react-feather"
 
-export default function Modal({ open, onClose, children }) {
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}
+
+export default function Modal({ open, onClose, children }: ModalProps){
   return (
     // backdrop
     <div
