@@ -57,7 +57,7 @@ const Home: NextPage<Props> = ({ contacts }) => {
 export default Home
 
 export async function getServerSideProps() {
-  const response = await axios.get(`${process.env.API_URL}/api/contacts`);
+  const response = await axios.get(`https://jsonplaceholder.typicode.com/users`);
   const contacts = response.data;
   return {
     props: {

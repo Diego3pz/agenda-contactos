@@ -29,22 +29,30 @@ const ContactsList: React.FC<Props> = ({ contacts }) => {
     useEffect(() => {
         const apiDataLoaded = localStorage.getItem('apiDataLoaded');
         if (!apiDataLoaded) {
-            axios.get(`${process.env.REACT_APP_API_UR}/api/contacts`)
+            axios.get(`https://jsonplaceholder.typicode.com/users`)
                 .then(res => {
                     setFormData(res.data);
                     localStorage.setItem('contacts', JSON.stringify(res.data));
                     localStorage.setItem('apiDataLoaded', 'true');
                 })
                 .catch(err => {
-                    console.log(err);
+                    console.error('Error fetching contacts from API:', err);
+                    setFormData([]);
                 });
         } else {
-            const storedContacts = localStorage.getItem('contacts');
-            if (storedContacts) {
-                setFormData(JSON.parse(storedContacts));
+            try {
+                const storedContacts = localStorage.getItem('contacts');
+                if (storedContacts) {
+                    setFormData(JSON.parse(storedContacts));
+                } else {
+                    setFormData([]);
+                }
+            } catch (error) {
+                console.error('Error loading contacts from localStorage:', error);
+                setFormData([]); // Iniciar sin datos si hay un error
             }
         }
-    }, []);
+    }, [setFormData]);
 
     let results = [];
     if (!inputValue) {
